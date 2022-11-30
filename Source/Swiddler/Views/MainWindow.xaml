@@ -23,7 +23,7 @@
         <SolidColorBrush x:Key="FlaggedBrush">#007ACC</SolidColorBrush>
         <sys:Int32 x:Key="TreeIndent">8</sys:Int32>
     </Window.Resources>
-    
+
     <Window.InputBindings>
         <KeyBinding Command="{x:Static cmd:MiscCommands.QuickConnect}" Gesture="CTRL+Q" />
         <KeyBinding Command="{x:Static cmd:MiscCommands.Send}" Gesture="ALT+S" />
@@ -78,8 +78,13 @@
             <Button ToolTip="Disconnect (Ctrl+D)" Click="Disconnect_Click" IsEnabled="{Binding Properties.CanStop}">
                 <Controls:CrispImage ImageName="Stop" />
             </Button>
+            <Button ToolTip="Reconnect (Ctrl+R)" Click="Reconnect_Click" IsEnabled="{Binding Properties.CanStart}">
+                <Controls:CrispImage ImageName="Restart" />
+            </Button>
             <ComboBox Margin="1 0" SelectedIndex="0" Width="260" IsEditable="True" ToolTip="Quick Connect (Ctrl+Q)" Text="http://example.org" 
                       Name="QuickConnectCombo" PreviewKeyDown="QuickConnectCombo_PreviewKeyDown"/>
+            <TextBox Name="TargetNum" VerticalContentAlignment="Center" b:TextBox.SelectAllText="True" Text="{Binding Properties.TargetNum, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}" 
+                     Margin="4 0" Grid.Row="1" Grid.Column="1" b:TextBox.NumericRange="1 65535" Width="38" Height="16" />
             <Button ToolTip="Quick Connect" Click="QuickConnect_Click">
                 <Controls:CrispImage ImageName="Run" />
             </Button>
@@ -93,12 +98,15 @@
         </ToolBar>
         <Grid SnapsToDevicePixels="True" UseLayoutRounding="True">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="382" Name="leftCol" />
+                <ColumnDefinition Width="174" Name="leftCol" />
+                <ColumnDefinition Width="78"/>
+                <ColumnDefinition Width="22"/>
+                <ColumnDefinition Width="108"/>
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Controls:SessionListView BorderThickness="0" x:Name="sessionListView" FocusVisualStyle="{x:Null}">
+            <Controls:SessionListView BorderThickness="0" x:Name="sessionListView" FocusVisualStyle="{x:Null}" Grid.ColumnSpan="4">
                 <ListView.View>
                     <GridView ColumnHeaderContainerStyle="{StaticResource FlatListViewHeader}">
                         <GridViewColumn Header="Connection" Width="200" >
@@ -157,16 +165,16 @@
                 </ListView.View>
 
             </Controls:SessionListView>
-            
-            <GridSplitter Grid.Column="1" ResizeDirection="Columns" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowsPreview="False" Focusable="False" />
 
-            <Grid Grid.Column="2" SnapsToDevicePixels="True" UseLayoutRounding="True">
+            <GridSplitter Grid.Column="4" ResizeDirection="Columns" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowsPreview="False" Focusable="False" />
+
+            <Grid Grid.Column="5" SnapsToDevicePixels="True" UseLayoutRounding="True">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="100" Name="inputRow" />
                 </Grid.RowDefinitions>
-                
+
                 <Controls:ChunkView  x:Name="chunkView" Padding="1" />
                 <GridSplitter Height="5" Grid.Row="1" Visibility="{Binding Properties.InputVisibility}" ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowsPreview="False" Focusable="False" />
 

@@ -7,6 +7,7 @@ namespace Swiddler.Commands
         public static RoutedCommand QuickConnect { get; } = new RoutedCommand(nameof(QuickConnect), typeof(MiscCommands));
         public static RoutedCommand Send { get; } = new RoutedCommand(nameof(Send), typeof(MiscCommands));
         public static RoutedCommand Disconnect { get; } = new RoutedCommand(nameof(Disconnect), typeof(MiscCommands));
+        public static RoutedCommand Reconnect { get; } = new RoutedCommand(nameof(Reconnect), typeof(MiscCommands));
         public static RoutedCommand Search { get; } = new RoutedCommand(nameof(Search), typeof(MiscCommands));
         public static RoutedCommand SelectAll { get; } = new RoutedCommand(nameof(SelectAll), typeof(MiscCommands));
         public static RoutedCommand GoToStart { get; } = new RoutedCommand(nameof(GoToStart), typeof(MiscCommands));

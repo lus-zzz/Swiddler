@@ -126,11 +126,10 @@ namespace Swiddler.Common
 
         public Task StartAsync() => Task.Run(Start);
 
-        bool _startCalled = false;
+        
         public void Start()
         {
-            if (_startCalled) throw new InvalidOperationException("Session already started.");
-            _startCalled = true;
+            if (State == SessionState.Started) throw new InvalidOperationException("Session already started.");
 
             State = SessionState.Starting;
 
@@ -483,6 +482,12 @@ namespace Swiddler.Common
             SessionChannel.Observers.Clear();
 
             if (showInfo) WriteMessage("Session ended by user.", MessageType.Error);
+        }
+
+        public void Restart()
+        {
+            if (State == SessionState.Stopped)
+                StartAsync();
         }
 
         void StopChildren()

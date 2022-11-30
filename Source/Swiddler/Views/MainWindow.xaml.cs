@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -74,6 +75,7 @@ namespace Swiddler.Views
 
             CommandBindings.Add(new CommandBinding(ApplicationCommands.New, NewConnection_Click));
             CommandBindings.Add(new CommandBinding(MiscCommands.Disconnect, Disconnect_Click));
+            CommandBindings.Add(new CommandBinding(MiscCommands.Reconnect, Reconnect_Click));
             CommandBindings.Add(new CommandBinding(MiscCommands.QuickConnect, (s, e) => QuickConnectCombo.Focus()));
             CommandBindings.Add(new CommandBinding(MiscCommands.Send, (s, e) => Send()));
             CommandBindings.Add(new CommandBinding(MiscCommands.SelectAll, (s, e) => SelectAll()));
@@ -135,6 +137,8 @@ namespace Swiddler.Views
 
             newSession.StateChanged += Session_StateChanged;
 
+            QuickConnectCombo.Text = newSession.ClientSettings.ToString();
+
             UpdateCanStop(newSession.State);
             UpdateInputVisibility(newSession);
         }
@@ -148,6 +152,7 @@ namespace Swiddler.Views
         void UpdateCanStop(SessionState state)
         {
             Properties.CanStop = state == SessionState.New || state == SessionState.Started || state == SessionState.Starting;
+            Properties.CanStart = !Properties.CanStop;
         }
 
         GridLength validInputRowHeight;
@@ -271,17 +276,27 @@ namespace Swiddler.Views
             chunkView.CurrentSession?.Stop();
         }
 
+        private void Reconnect_Click(object sender, RoutedEventArgs e)
+        {
+            chunkView.CurrentSession?.Restart();
+        }
+
+
+
         private void QuickConnect_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(QuickConnectCombo.Text))
+            for (int i = 0; i < Properties.TargetNum; i++)
             {
-                try
+                if (!string.IsNullOrWhiteSpace(QuickConnectCombo.Text))
                 {
-                    AddSessionAndStart(ConnectionSettings.TryCreateFromString(QuickConnectCombo.Text)?.CreateSession());
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    try
+                    {
+                        AddSessionAndStart(ConnectionSettings.TryCreateFromString(QuickConnectCombo.Text)?.CreateSession());
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }
@@ -470,13 +485,20 @@ namespace Swiddler.Views
             public ScrollViewer InputText_ScrollViewer { get => _InputText_ScrollViewer; set => SetProperty(ref _InputText_ScrollViewer, value); }
 
             bool _CanStop = true;
+            bool _CanStart = true;
             public bool CanStop { get => _CanStop; set => SetProperty(ref _CanStop, value); }
+
+            public bool CanStart { get => _CanStart; set => SetProperty(ref _CanStart, value); }
 
             Visibility _InputVisibility = Visibility.Visible;
             public Visibility InputVisibility { get => _InputVisibility; set => SetProperty(ref _InputVisibility, value); }
 
             bool _ShowSubmitButton = true;
             public bool ShowSubmitButton { get => _ShowSubmitButton; set => SetProperty(ref _ShowSubmitButton, value); }
+
+            protected int _TargetNum = 1;
+            public int TargetNum { get => _TargetNum; set => SetProperty(ref _TargetNum, value); }
+
         }
 
     }
